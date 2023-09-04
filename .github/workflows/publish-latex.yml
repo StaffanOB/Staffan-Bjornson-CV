@@ -1,0 +1,80 @@
+# This Action autogenerates PDFs and standalone HTML 
+# out of your Overleaf projects (or any LaTeX-live project).
+# 
+# PDF  generator: pdflatex
+# HTML generator: htlatex 
+# 
+# Both tools come from LaTeX Live and are executed on 
+# the latest version of Ubuntu.
+# 
+#    Given:
+#       A repository with a LaTeX project with main.tex in the root folder
+#   
+#    On every push:
+#       This GitHub Action builds the project with LaTeX Live. 
+#       A   PDF version of main.tex is uploaded to a Release called "Current." 
+#           (Make sure that release exists first)
+#       An HTML version of main.tex is uploaded to a new branch called gh-pages. 
+#           (Make sure GitHub Pages is active and reads from the gh-pages branch)
+
+
+name: Build and Deploy LaTeX Project
+
+permissions: write-all
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      
+      # Compiles 
+      - name: Build Latex PDF and HTML
+        run: |
+          sudo apt update
+          sudo apt install texlive-full
+          mkdir ./public
+          cp *.tex public/
+          cd public/
+          pdflatex main.tex
+          make4ht main.tex
+          mv main.html index.html
+  
+      # Uploads the PDF
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: PDF
+          path: public/main.pdf
+
+      # Publishes the PDF as a release
+      - name: Publish PDF
+        uses: softprops/action-gh-release@v1
+        # if: startsWith(github.ref, 'refs/tags/')
+        with:
+          tag_name: Current
+          files: public/main.pdf
+          
+      # Publish HTML to GitHub Pages
+      - name: Publish HTML to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
