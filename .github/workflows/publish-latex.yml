@@ -2,20 +2,18 @@
 # out of your Overleaf projects (or any LaTeX-live project).
 # 
 # PDF  generator: pdflatex
-# HTML generator: htlatex 
 # 
 # Both tools come from LaTeX Live and are executed on 
 # the latest version of Ubuntu.
 # 
 #    Given:
-#       A repository with a LaTeX project with main.tex in the root folder
+#       A repository with a LaTeX project with sobCV.tex in the root folder
 #   
 #    On every push:
 #       This GitHub Action builds the project with LaTeX Live. 
-#       A   PDF version of main.tex is uploaded to a Release called "Current." 
+#       A   PDF version of sobCV.tex is uploaded to a Release called "Current." 
 #           (Make sure that release exists first)
-#       An HTML version of main.tex is uploaded to a new branch called gh-pages. 
-#           (Make sure GitHub Pages is active and reads from the gh-pages branch)
+
 
 
 name: Build and Deploy LaTeX Project
@@ -53,8 +51,8 @@ jobs:
           mkdir ./public
           cp *.tex public/
           cd public/
-          pdflatex main.tex
-          make4ht main.tex
+          pdflatex sobCV.tex
+     
           mv main.html index.html
   
       # Uploads the PDF
@@ -72,9 +70,3 @@ jobs:
           tag_name: Current
           files: public/main.pdf
           
-      # Publish HTML to GitHub Pages
-      #- name: Publish HTML to GitHub Pages
-      #  uses: peaceiris/actions-gh-pages@v3
-      #  with:
-      #    github_token: ${{ secrets.GITHUB_TOKEN }}
-      #    publish_dir: ./public
