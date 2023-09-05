@@ -54,7 +54,7 @@ jobs:
           cd public/
           pdflatex sobCV.tex
      
-          mv main.html index.html
+          #mv main.html index.html
   
       # Uploads the PDF
       - name: Upload artifact
