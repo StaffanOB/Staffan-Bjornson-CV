@@ -96,7 +96,7 @@
 
 \newcommand{\compList}[1]{
     \vspace{1em} \noindent
-    \raggedright\textbf{Kompetenser i fokus:}
+    \raggedright\textbf{Competencies in focus: }
     \vspace{0.2em} \noindent
         #1
 }
