@@ -36,7 +36,7 @@ jobs:
       - name: Build Latex PDF 
         run: |
           sudo apt update
-          sudo apt install texlive-base teslive-pictures make
+          sudo apt install texlive-base teslive-latex-recommended make
           mkdir ./public
           cp *.tex *.cls public/
           cp -r icons/ public/
