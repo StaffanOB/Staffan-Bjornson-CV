@@ -44,8 +44,8 @@ jobs:
           cp -r icons/ public/
           cp Makefile public/
           cd public/
-          #pdflatex sobCV.tex
-          make
+          pdflatex sobCV.tex
+          #make
           pwd
           ls -AlF
   release:
