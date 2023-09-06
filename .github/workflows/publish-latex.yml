@@ -36,12 +36,14 @@ jobs:
       - name: Build Latex PDF 
         run: |
           sudo apt update
-          sudo apt install texlive-full
+          sudo apt install texlive-base teslive-pictures make
           mkdir ./public
           cp *.tex *.cls public/
           cp -r icons/ public/
+          cp Makefile
           cd public/
-          pdflatex sobCV.tex
+          #pdflatex sobCV.tex
+          make
           pwd
           ls -AlF
   release:
