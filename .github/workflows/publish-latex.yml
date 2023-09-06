@@ -31,12 +31,13 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    container: pandoc/latex
     steps:
       - uses: actions/checkout@v3
       - name: Build Latex PDF 
         run: |
           sudo apt update
-          sudo apt install make texlive-full # texlive-base texlive-latex-recommended texlive-latex-extra texlive-fonts-extra
+          sudo apt install make #texlive-full # texlive-base texlive-latex-recommended texlive-latex-extra texlive-fonts-extra
           mkdir ./public
           cp *.tex *.cls public/
           cp -r icons/ public/
