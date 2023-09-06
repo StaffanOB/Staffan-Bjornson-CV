@@ -40,7 +40,7 @@ jobs:
           mkdir ./public
           cp *.tex *.cls public/
           cp -r icons/ public/
-          cp Makefile
+          cp Makefile public/
           cd public/
           #pdflatex sobCV.tex
           make
