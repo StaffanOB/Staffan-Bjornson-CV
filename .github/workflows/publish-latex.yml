@@ -16,7 +16,7 @@
 
 
 
-name: Build and Deploy LaTeX Project
+name: Build and Deploy Staffans CV PDF
 permissions: write-all
 
 # Controls when the workflow will run
