@@ -23,50 +23,68 @@ on:
   push:
     branches:
       - main  # Trigger on pushes to the main branch
-  pull_request:
-    branches:
-      - main  # Trigger on pull requests targeting the main branch
+  workflow_dispatch:  # Allow manual triggering
 
 jobs:
   build-pdf:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
+      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # Set up LaTeX environment
+      # Step 2: Set up LaTeX environment
       - name: Install LaTeX
         run: |
           sudo apt update
           sudo apt install -y texlive-full
 
-      # Build the PDF
+      # Step 3: Compile LaTeX to PDF
       - name: Compile LaTeX to PDF
         run: |
+          mkdir -p output
           pdflatex -interaction=nonstopmode -output-directory=output main.tex
 
-      # Upload the PDF as an artifact
+      # Step 4: Upload PDF as an artifact
       - name: Upload PDF
         uses: actions/upload-artifact@v3
         with:
           name: LaTeX-PDF
           path: output/main.pdf
-          
-  release:
-    name: Release
+
+  create-release:
+    needs: build-pdf
     runs-on: ubuntu-latest
-    needs: build
+
     steps:
-    - name: Download artefact
-      uses: actions/checkout@v3
-      with:
-        name: Build Latex PDF
-    - name: Create GitHub Release
-      uses: actions/create-release@v1
-      env: 
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.run_number }}
-        release_name: Release ${{ github.run_number }}
+      # Step 1: Checkout the repository (needed to determine version/tag)
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up GitHub CLI (if you prefer `gh`)
+      - name: Install GitHub CLI
+        run: sudo apt install gh
+
+      # Step 3: Create a GitHub Release and Upload the PDF
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v1.0.0  # Replace with dynamic versioning if needed
+          release_name: "LaTeX PDF Release v1.0.0"
+          body: "This release contains the latest compiled LaTeX PDF."
+          draft: false
+          prerelease: false
+
+      # Step 4: Upload the PDF to the Release
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: output/main.pdf
+          asset_name: main.pdf
+          asset_content_type: application/pdf
