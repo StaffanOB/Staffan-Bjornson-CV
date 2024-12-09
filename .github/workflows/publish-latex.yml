@@ -1,20 +1,18 @@
-# This Action autogenerates PDFs and standalone HTML 
+# This Action autogenerates PDFs and standalone HTML
 # out of your Overleaf projects (or any LaTeX-live project).
-# 
+#
 # PDF  generator: pdflatex
-# 
-# Both tools come from LaTeX Live and are executed on 
+#
+# Both tools come from LaTeX Live and are executed on
 # the latest version of Ubuntu.
-# 
+#
 #    Given:
 #       A repository with a LaTeX project with sobCV.tex in the root folder
-#   
+#
 #    On every push:
-#       This GitHub Action builds the project with LaTeX Live. 
-#       A   PDF version of sobCV.tex is uploaded to a Release called "Current." 
+#       This GitHub Action builds the project with LaTeX Live.
+#       A   PDF version of sobCV.tex is uploaded to a Release called "Current."
 #           (Make sure that release exists first)
-
-
 
 name: Build and Deploy Staffans CV PDF
 permissions: write-all
@@ -22,8 +20,8 @@ permissions: write-all
 on:
   push:
     branches:
-      - main  # Trigger on pushes to the main branch
-  workflow_dispatch:  # Allow manual triggering
+      - main # Trigger on pushes to the main branch
+  workflow_dispatch: # Allow manual triggering
 
 jobs:
   build-pdf:
@@ -38,7 +36,8 @@ jobs:
       - name: Install LaTeX
         run: |
           sudo apt update
-          sudo apt install -y texlive-full
+          sudo apt install -y texlive-latex-recommended, texlive-latex-extra, texlive-fonts-extra
+          #sudo apt install -y texlive-full
 
       # Step 3: Compile LaTeX to PDF
       - name: Compile LaTeX to PDF
@@ -72,7 +71,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v1.0.0  # Replace with dynamic versioning if needed
+          tag_name: v1.0.0 # Replace with dynamic versioning if needed
           release_name: "LaTeX PDF Release v1.0.0"
           body: "This release contains the latest compiled LaTeX PDF."
           draft: false
@@ -85,6 +84,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: "output/Staffan Bjornson CV.pdf"
+          asset_path: "output/"
           asset_name: "Staffan Bjornson CV.pdf"
           asset_content_type: application/pdf
