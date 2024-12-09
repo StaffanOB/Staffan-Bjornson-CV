@@ -44,14 +44,14 @@ jobs:
       - name: Compile LaTeX to PDF
         run: |
           mkdir -p output
-          pdflatex -interaction=nonstopmode -output-directory=output main.tex
+          pdflatex -interaction=nonstopmode -output-directory=output sobCV.tex
 
       # Step 4: Upload PDF as an artifact
       - name: Upload PDF
         uses: actions/upload-artifact@v3
         with:
           name: LaTeX-PDF
-          path: output/main.pdf
+          path: "output/Staffan Bjornson CV.pdf"
 
   create-release:
     needs: build-pdf
@@ -85,6 +85,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: output/main.pdf
-          asset_name: main.pdf
+          asset_path: "output/Staffan Bjornson CV.pdf"
+          asset_name: "Staffan Bjornson CV.pdf"
           asset_content_type: application/pdf
