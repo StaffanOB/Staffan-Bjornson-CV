@@ -36,8 +36,8 @@ jobs:
       - name: Install LaTeX
         run: |
           sudo apt update
-          sudo apt install -y texlive-latex-recommended, texlive-latex-extra, texlive-fonts-extra
-          #sudo apt install -y texlive-full
+          #sudo apt install -y texlive-latex-recommended, texlive-latex-extra, texlive-fonts-extra
+          sudo apt install -y texlive-full
 
       # Step 3: Compile LaTeX to PDF
       - name: Compile LaTeX to PDF
