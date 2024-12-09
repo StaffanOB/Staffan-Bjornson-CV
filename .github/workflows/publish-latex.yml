@@ -19,34 +19,41 @@
 name: Build and Deploy Staffans CV PDF
 permissions: write-all
 
-# Controls when the workflow will run
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main  # Trigger on pushes to the main branch
   pull_request:
-    branches: [ "main" ]
-  workflow_dispatch:
+    branches:
+      - main  # Trigger on pull requests targeting the main branch
 
 jobs:
-  build:
-    name: Build
+  build-pdf:
     runs-on: ubuntu-latest
-    container: pandoc/latex
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Build Latex PDF 
+      # Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Set up LaTeX environment
+      - name: Install LaTeX
         run: |
-          apt update
-          apt install make texlive-latex-recommended texlive-latex-extra texlive-fonts-extra
-          mkdir ./public
-          cp *.tex *.cls public/
-          cp -r icons/ public/
-          cp Makefile public/
-          cd public/
-          pdflatex sobCV.tex
-          #make
-          pwd
-          ls -AlF
+          sudo apt update
+          sudo apt install -y texlive-full
+
+      # Build the PDF
+      - name: Compile LaTeX to PDF
+        run: |
+          pdflatex -interaction=nonstopmode -output-directory=output main.tex
+
+      # Upload the PDF as an artifact
+      - name: Upload PDF
+        uses: actions/upload-artifact@v3
+        with:
+          name: LaTeX-PDF
+          path: output/main.pdf
+          
   release:
     name: Release
     runs-on: ubuntu-latest
