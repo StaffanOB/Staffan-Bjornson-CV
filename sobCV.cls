@@ -7,7 +7,7 @@
 \RequirePackage[colorlinks = true]{hyperref}
 \RequirePackage{tabularx}
 \RequirePackage{pgffor}
-\RequirePackage{amssymb}
+%\RequirePackage{amssymb}
 \RequirePackage[utf8]{inputenc}
 \RequirePackage{titlesec}
 \RequirePackage{forloop}
