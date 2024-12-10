@@ -1,117 +1,60 @@
-# This Action autogenerates PDFs and standalone HTML
-# out of your Overleaf projects (or any LaTeX-live project).
-#
-# PDF  generator: pdflatex
-#
-# Both tools come from LaTeX Live and are executed on
-# the latest version of Ubuntu.
-#
-#    Given:
-#       A repository with a LaTeX project with sobCV.tex in the root folder
-#
-#    On every push:
-#       This GitHub Action builds the project with LaTeX Live.
-#       A   PDF version of sobCV.tex is uploaded to a Release called "Current."
-#           (Make sure that release exists first)
-
-name: Build and Deploy Staffans CV PDF
-permissions: write-all
+name: Build and Release LaTeX PDF
 
 on:
   push:
-    branches:
-      - main # Trigger on pushes to the main branch
-  workflow_dispatch: # Allow manual triggering
+    tags:
+      - "v*" # Triggers on pushing a tag starting with "v"
 
 jobs:
-  build-pdf:
+  build-latex:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
-      - name: Checkout Repository
+      # Checkout the repository
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Set up LaTeX environment
+      # Set up LaTeX environment
       - name: Install LaTeX
         run: |
-          sudo apt update
-          #sudo apt install -y texlive-latex-recommended, texlive-latex-extra, texlive-fonts-extra
-          sudo apt install -y texlive-full
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra texlive-xetex
 
-      # Step 3: Compile LaTeX to PDF
-      - name: Compile LaTeX to PDF
+      # Build the LaTeX file
+      - name: Build PDF from LaTeX
         run: |
-          mkdir -p output
-          pdflatex -interaction=nonstopmode -output-directory=output sobCV.tex
+          mkdir -p build
+          pdflatex -output-directory=build sobCB.tex
+          mv build/sobCB.pdf "Staffan Bjornson CV.pdf"
 
-      # Step 4: Upload PDF as an artifact
-      - name: Upload PDF
-        uses: actions/upload-artifact@v3
-        with:
-          name: LaTeX-PDF
-          path: "output/Staffan Bjornson CV.pdf"
-
-  create-release:
-    needs: build-pdf
-    runs-on: ubuntu-latest
-
-    steps:
-      # Step 1: Checkout the repository (needed to determine version/tag)
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      # Step 2: Set up GitHub CLI (if you prefer `gh`)
-      - name: Install GitHub CLI
-        run: sudo apt install gh
-
-      - name: Fetch all tags
-        run: git fetch --tags
-
-      - name: Generate unique tag
-
+      # Prepare ZIP file
+      - name: Prepare Release ZIP
+        env:
+          TAG: ${{ github.ref_name }}
         run: |
           BUILD_NUMBER=${{ github.run_number }}
-          TAG="v1.0.0-${BUILD_NUMBER}"
-          echo "TAG=$TAG" >> $GITHUB_ENV
+          ZIP_NAME="Staffan Bjornson CV-${TAG}-${BUILD_NUMBER}.zip"
+          zip -j "${ZIP_NAME}" "Staffan Bjornson CV.pdf"
+          echo "ZIP_NAME=${ZIP_NAME}" >> $GITHUB_ENV
 
-      - name: Check if tag exists
-        run: |
-          if git rev-parse $TAG >/dev/null 2>&1
-          then
-            echo "Tag $TAG already exists. Skipping release creation."
-            exit 1
-          fi
-
-      # Step 3: Create a GitHub Release and Upload the PDF
-      - name: Create Release
+      # Create GitHub Release
+      - name: Create GitHub Release
+        id: create_release
         uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.TAG }}
-          release_name: "LaTeX PDF Release ${{ env.TAG }}"
-          body: "This release contains the latest compiled LaTeX PDF."
+          tag_name: ${{ github.ref_name }}
+          release_name: "Release ${{ github.ref_name }}"
+          body: "This release includes the updated CV PDF."
           draft: false
           prerelease: false
-
-      - name: Build and Deploy Staffans CV PDF
-        id: create-release
-        uses: staffanbjornson/latex-action@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          repository: staffanbjornson/sobCV
-          main_file: sobCV.tex
-          output_dir: output
-          release_name: "Current"
-
-      # Step 4: Upload the PDF to the Release
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Upload the ZIP file to the release
+      - name: Upload ZIP to Release
+        uses: actions/upload-release-asset@v1
         with:
-          upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: "output/Staffan Bjornson CV.pdf"
-          asset_name: "Staffan Bjornson CV.pdf"
-          asset_content_type: application/pdf
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.ZIP_NAME }}
+          asset_name: ${{ env.ZIP_NAME }}
+          asset_content_type: application/zip
