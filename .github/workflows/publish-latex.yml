@@ -38,11 +38,12 @@ jobs:
       - name: Check if Tag Exists
         id: tag_check
         run: |
-          if git rev-parse "refs/tags/${{ env.TAG_NAME }}" >/dev/null 2>&1; then             
-            echo "Tag already exists."             
-            echo "SKIP_RELEASE=true" >> $GITHUB_ENV           
-          else             
-            echo "SKIP_RELEASE=false" >> $GITHUB_ENV           fi
+          if git rev-parse "refs/tags/${{ env.TAG_NAME }}" >/dev/null 2>&1; then
+            echo "Tag already exists."
+            echo "SKIP_RELEASE=true" >> $GITHUB_ENV
+          else
+            echo "SKIP_RELEASE=false" >> $GITHUB_ENV
+          fi
 
       # Prepare ZIP file
       - name: Prepare Release ZIP
