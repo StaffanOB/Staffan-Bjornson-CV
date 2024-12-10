@@ -95,6 +95,16 @@ jobs:
           draft: false
           prerelease: false
 
+      - name: Build and Deploy Staffans CV PDF
+        id: create-release
+        uses: staffanbjornson/latex-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          repository: staffanbjornson/sobCV
+          main_file: sobCV.tex
+          output_dir: output
+          release_name: "Current"
+
       # Step 4: Upload the PDF to the Release
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
@@ -102,6 +112,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: "output/Staffan Bjornson CV"
+          asset_path: "output/Staffan Bjornson CV.pdf"
           asset_name: "Staffan Bjornson CV.pdf"
           asset_content_type: application/pdf
