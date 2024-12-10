@@ -1,9 +1,11 @@
-name: Build and Release LaTeX PDF
+name: Build and Deploy Staffans CV PDF
+permissions: write-all
 
 on:
   push:
-    tags:
-      - "v*" # Triggers on pushing a tag starting with "v"
+    branches:
+      - main # Trigger on pushes to the main branch
+  workflow_dispatch: # Allow manual triggering
 
 jobs:
   build-latex:
