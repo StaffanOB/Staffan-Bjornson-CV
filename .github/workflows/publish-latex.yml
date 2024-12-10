@@ -51,7 +51,7 @@ jobs:
           TAG: ${{ github.ref_name }}
         run: |
           BUILD_NUMBER=${{ github.run_number }}
-          ZIP_NAME="Staffan Bjornson CV-${TAG}-${BUILD_NUMBER}.zip"
+          ZIP_NAME="Staffan Bjornson CV-${TAG_NAME}.zip"
           zip -j "${ZIP_NAME}" "Staffan Bjornson CV.pdf"
           echo "ZIP_NAME=${ZIP_NAME}" >> $GITHUB_ENV
 
@@ -75,7 +75,7 @@ jobs:
         if: steps.create_release.outputs.upload_url != ''
         uses: actions/upload-release-asset@v1
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ env.ZIP_NAME }}
           asset_name: ${{ env.ZIP_NAME }}
           asset_content_type: application/zip
