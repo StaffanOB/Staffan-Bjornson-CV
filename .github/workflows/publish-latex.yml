@@ -39,13 +39,21 @@ jobs:
           zip -j "${ZIP_NAME}" "Staffan Bjornson CV.pdf"
           echo "ZIP_NAME=${ZIP_NAME}" >> $GITHUB_ENV
 
+      - name: Generate Unique Tag
+        id: generate_tag
+        run: |
+          DATE=$(date +%Y%m%d%H%M%S)
+          echo "TAG_NAME=v${{ github.run_number }}-${DATE}" >> $GITHUB_ENV
+
       # Create GitHub Release
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ github.ref_name }}
-          release_name: "Release ${{ github.ref_name }}"
+          #tag_name: $TAG_NAME #${{ github.ref_name }}
+          #release_name: "Release ${{ github.ref_name }}"
+          tag_name: ${{ env.TAG_NAME }}
+          release_name: "Release ${{ env.TAG_NAME }}"
           body: "This release includes the updated CV PDF."
           draft: false
           prerelease: false
