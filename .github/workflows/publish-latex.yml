@@ -65,14 +65,32 @@ jobs:
       - name: Install GitHub CLI
         run: sudo apt install gh
 
+      - name: Fetch all tags
+        run: git fetch --tags
+
+      - name: Generate unique tag
+
+        run: |
+          BUILD_NUMBER=${{ github.run_number }}
+          TAG="v1.0.0-${BUILD_NUMBER}"
+          echo "TAG=$TAG" >> $GITHUB_ENV
+
+      - name: Check if tag exists
+        run: |
+          if git rev-parse $TAG >/dev/null 2>&1
+          then
+            echo "Tag $TAG already exists. Skipping release creation."
+            exit 1
+          fi
+
       # Step 3: Create a GitHub Release and Upload the PDF
       - name: Create Release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v1.0.0 # Replace with dynamic versioning if needed
-          release_name: "LaTeX PDF Release v1.0.0"
+          tag_name: ${{ env.TAG }}
+          release_name: "LaTeX PDF Release ${{ env.TAG }}"
           body: "This release contains the latest compiled LaTeX PDF."
           draft: false
           prerelease: false
