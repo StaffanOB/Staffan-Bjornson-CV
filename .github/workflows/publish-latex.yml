@@ -51,8 +51,6 @@ jobs:
           body: "This release includes the updated CV PDF."
           draft: false
           prerelease: false
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Upload the ZIP file to the release
       - name: Upload ZIP to Release
