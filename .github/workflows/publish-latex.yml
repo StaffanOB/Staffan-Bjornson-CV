@@ -26,8 +26,8 @@ jobs:
       - name: Build PDF from LaTeX
         run: |
           mkdir -p build
-          pdflatex -output-directory=build sobCB.tex
-          mv build/sobCB.pdf "Staffan Bjornson CV.pdf"
+          pdflatex -output-directory=build sobCV.tex
+          mv build/sobCV.pdf "Staffan Bjornson CV.pdf"
 
       # Prepare ZIP file
       - name: Prepare Release ZIP
