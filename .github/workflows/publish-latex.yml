@@ -51,7 +51,7 @@ jobs:
           TAG: ${{ github.ref_name }}
         run: |
           BUILD_NUMBER=${{ github.run_number }}
-          ZIP_NAME="Staffan Bjornson CV-${TAG_NAME}.zip"
+          ZIP_NAME="Staffan Bjornson CV-${BUILD_NUMBER}.zip"
           zip -j "${ZIP_NAME}" "Staffan Bjornson CV.pdf"
           echo "ZIP_NAME=${ZIP_NAME}" >> $GITHUB_ENV
 
@@ -79,3 +79,5 @@ jobs:
           asset_path: ${{ env.ZIP_NAME }}
           asset_name: ${{ env.ZIP_NAME }}
           asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
