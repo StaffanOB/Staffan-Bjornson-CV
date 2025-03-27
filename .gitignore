@@ -295,5 +295,7 @@ TSWLatexianTemp*
 # xwatermark package
 *.xwm
 
+sobCL_*.tex
 output/*
 letter/*
+cover_letters/*
