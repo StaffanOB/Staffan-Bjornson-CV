@@ -2,7 +2,8 @@
 \ProvidesClass{sobCV}[2015/09/08 Staffan björnsons CV class]
 \LoadClass[11pt]{article}
 
-\RequirePackage[paperwidth=210mm,paperheight=297mm,top=1cm,right=0cm,bottom=2.5cm,left=0cm]{geometry}
+%\RequirePackage[paperwidth=210mm,paperheight=297mm,top=1cm,right=0cm,bottom=2.5cm,left=0cm]{geometry}
+\RequirePackage[paperwidth=210mm,paperheight=297mm,top=1cm,right=0.6cm,bottom=2.5cm,left=0.6cm]{geometry}
 %\RequirePackage{hyperref}                         % Required for links
 \RequirePackage[colorlinks = true]{hyperref}
 \RequirePackage{tabularx}
@@ -39,13 +40,24 @@
 % ============================================================================
 % TITLE NAME 
 \newcommand{\name}[2]{
-    \vspace{2.5em}
+    \newline
     \centerline{\fontsize{40}{60}\selectfont {#1 \color{highlight}#2} CV}
+}
+\newcommand{\namecl}[2]{
+    \vspace{2.5em}
+    \centerline{\fontsize{30}{60}\selectfont {#1 \color{highlight}#2}}
+}
+\newcommand{\namecltitle}[1]{
+    \vspace{0.5em}
+    \centerline{\fontsize{10}{60}\selectfont {\color{darkGray}\MakeUppercase{#1}}}
 }
 
 \newcommand{\banner}[1]{
-    \vspace{2.5em}
-    \hspace*{-0.6cm}\includegraphics[width=\paperwidth]{icons/#1}
+    \vspace{0.5em}
+    \noindent\makebox[\textwidth][l]{%
+        \hspace*{-\dimexpr\oddsidemargin+1in}%
+        \includegraphics[width=\paperwidth]{icons/#1}%
+    }
     \vspace{2em}
 }
 
@@ -58,7 +70,7 @@
 }
 
 \newcommand{\longcontact}[6]{
-    \begin{tabularx}{0.94\textwidth} { 
+    \noindent\begin{tabularx}{\textwidth} { 
         >{\raggedright\arraybackslash}X 
         >{\raggedleft\arraybackslash}X  }
         \textbf{#1} & Date:  #4\\
@@ -71,14 +83,14 @@
 % ============================================================================
 % LIFE QUORE
 \newcommand{\userquote}[1]{
-    \vspace{1.5em}
+    \vspace{.5em}
     \quote{
         \begin{center}
             {\color{darkGray}\textit{One of my life mottos are:}\\}
             \color{darkGray}\textit{{\Large "#1"}}
         \end{center}
     }
-    \vspace{1.5em}
+    \vspace{2.5em}
     }
 
 
@@ -101,6 +113,19 @@
         #1
 }
 
+% ============================================================================
+% Cover Letter Title 
+\newcommand{\coverLetter}[1]{
+  \vspace{2.5em}
+  \noindent
+    \begin{adjustwidth}{1.5cm}{1.5cm} % ← adjust margins here
+    \raggedright
+    \setlength{\parskip}{0.5em} % optional spacing between paragraphs
+    \setlength{\parindent}{0pt} % remove indent
+    #1
+  \end{adjustwidth}
+  \vspace{1em}
+}
 
 % ============================================================================
 % EXPERIENCE NODE
@@ -247,6 +272,12 @@
    {}{0em}                                      % Can be used to give a prefix to all sections, like 'Section ...'
    {}   
 
+% ============================================================================
+% FOOTER
+\newcommand{\fotter}[1]{
+    \vspace{2.5em} \noindent
+    \centerline{#1}
+}
 
 % ============================================================================
 % LINKS
