@@ -10,12 +10,11 @@
         {+46 705 86 94 08} 
         {staffan.bjornson@toor.se}
 
-
     \namecl{Staffan}{Björnson}
-    \namecltitle{Testautomatiserare}
 
     % =============================================================================
     % Cover Letter
+    \namecltitle{Teknisk Testare}
     \coverLetter{
         Hej.
 
@@ -35,7 +34,10 @@
         levererar konsekvent dokumentation av hög kvalitet, delar med mig av
         in kunskap över teamgränser och implementerar hållbara lösningar.\\
 
-        I would welcome the opportunity to further discuss how my skills align with your needs. I am available for an interview at your convenience and can be reached at +46 705-86 94 08 or \href{mailto:staffan.bjornson@toor.se}{staffan.bjornson@toor.se}. 
+        I would welcome the opportunity to further discuss how my skills align with
+        your needs. I am available for an interview at your convenience and can be
+        reached at +46 705-86 94 08 or
+        \href{mailto:staffan.bjornson@toor.se}{staffan.bjornson@toor.se}. 
 
         \vspace{2em}
         Best regards,\\

@@ -16,7 +16,7 @@ all:
 	cp output/sobCV.pdf 'Staffan Bjornson CV.pdf'
 
 	$(GCC) -output-directory output/ $(DOC_SV)
-	cp output/sobCV_sv.pdf 'Staffan Bjornson CV - SV.pdf'
+	cp output/sobCV_sv.pdf 'Staffan Bjornson CV_se.pdf'
 
 	# Compile and rename all sobCL_*.tex files ===
 	@for file in sobCL_*.tex; do \
