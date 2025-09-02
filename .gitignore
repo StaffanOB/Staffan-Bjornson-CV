@@ -299,3 +299,4 @@ sobCL_*.tex
 output/*
 letter/*
 cover_letters/*
+.venv
