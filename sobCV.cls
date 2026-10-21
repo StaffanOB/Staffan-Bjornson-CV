@@ -7,21 +7,17 @@
 %\RequirePackage{hyperref}                         % Required for links
 \RequirePackage[colorlinks = true]{hyperref}
 \RequirePackage{tabularx}
-\RequirePackage{pgffor}
 %\RequirePackage{amssymb}
 \RequirePackage[utf8]{inputenc}
 \RequirePackage{titlesec}
-\RequirePackage{forloop}
-\RequirePackage[usenames,dvipsnames]{xcolor}      % Required for custom colors
+\RequirePackage[dvipsnames]{xcolor}               % Required for custom colors
 \usepackage{graphicx}                             % Used for images
 \usepackage{hyperxmp}
-\usepackage{lipsum}
 \usepackage{array}
 \usepackage{multirow}
 \usepackage{multicol}
 \usepackage{changepage}
 \usepackage[none]{hyphenat}
-\usepackage{tabularx}
 
 
 % ============================================================================
@@ -161,20 +157,32 @@
     \vspace{0pt}
 }
 
+\makeatletter
+\long\def\sobcv@csvlist#1#2{%
+    \sobcv@csvitem{#1}#2,\sobcv@csv@end
+}
+\long\def\sobcv@csvitem#1#2,#3\sobcv@csv@end{%
+    #1{#2}%
+    \if\relax\detokenize{#3}\relax
+    \else
+        \sobcv@csvitem{#1}#3,\sobcv@csv@end
+    \fi
+}
+\long\def\sobcv@bulletitem#1{%
+    \noindent{\raggedright\color{highlight}$\bullet$} #1\par
+}
+
 \newcommand{\exList}[2]{
     \vspace{1em} \noindent
     \raggedright\textbf{#1}
     \vspace{0em} %\noindent
         \begin{multicols}{2}
             \vspace{0pt}
-            \foreach \n in {#2}{
-                \noindent{\raggedright\color{highlight}$\bullet$} \n\par
-            }
+            \sobcv@csvlist\sobcv@bulletitem{#2}
             \vfill\null
         \end{multicols}
-    %\foreach \n in {#1}{{\color{highlight}$\bullet$} \n\par} 
     \vspace{1em}
-    }
+}
 
 \newcommand{\jobDetails}[2]{
 
@@ -194,7 +202,7 @@
             p{\dimexpr.20\linewidth-2\tabcolsep-1.3333\arrayrulewidth}
             p{\dimexpr.80\linewidth-2\tabcolsep-1.3333\arrayrulewidth}
         }
-        {\centerline{#2}} & {\raggedright\textbf{#1}1
+        {\centerline{#2}} & {\raggedright\textbf{#1}
 
         \textit{#3}} \\
     \end{tabular}
@@ -222,9 +230,7 @@
     \begin{adjustwidth}{30pt}{0pt}
         \begin{multicols}{#1}
             \vspace{0pt}
-            \foreach \n in {#2}{
-                \noindent{\raggedright\color{highlight}$\bullet$} \n\par
-            }
+            \sobcv@csvlist\sobcv@bulletitem{#2}
             \vfill\null
         \end{multicols}
     \end{adjustwidth}
@@ -238,9 +244,7 @@
     \hfill\begin{minipage}{
             \dimexpr\textwidth-3cm
         }
-        \foreach \n in {#1}{
-            \noindent{\raggedright\color{highlight}$\bullet$} \n\par
-        }
+        \sobcv@csvlist\sobcv@bulletitem{#1}
         \vfill\null
     \end{minipage}
 }
@@ -252,12 +256,11 @@
     \hfill\begin{minipage}{
             \dimexpr\textwidth-3cm
         }
-        \foreach \n in {#1}{{
-            \indent\color{highlight}$\bullet$} \n\par
-        } 
+        \sobcv@csvlist\sobcv@bulletitem{#1}
         \xdef\tpd{\the\prevdepth}
     \end{minipage}
 }
+\makeatother
 
 
 % ============================================================================
@@ -288,4 +291,3 @@
         & \small{\changeurlcolor{highlight}\href{http://#2}{#2}}\tabularnewline 
     \end{tabular}
 }
-

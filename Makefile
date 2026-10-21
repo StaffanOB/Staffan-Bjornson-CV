@@ -1,11 +1,13 @@
 SHELL=/bin/bash  # for the while loop below
 DOC=sobCV.tex  	 # set the path to your TeX file here
 DOC_SV=sobCV_sv.tex  	 # set the path to your TeX file here
-GCC=pdflatex	 # Latex compiler
+GCC=pdflatex -halt-on-error -interaction=nonstopmode # LaTeX compiler
 
 COVER_LETTER=$(wildcard sobCL_*.tex)
 PDFSRC := $(patsubst sobCL_%.tex,output/sobCL_%.pdf, $(COVER_LETTER))
 RENAMED := $(patsubst sobCL_%.tex,Staffan\ Bjornson\ CL\ -\ %.pdf, $(COVER_LETTER))
+
+.PHONY: all watch clean
 
 all:
 	mkdir -p output/
@@ -28,12 +30,11 @@ all:
 	done
 
 watch:  ## Recompile on updates to the source file
-	@while true; do; inotifywait $(DOC); sleep 0.01; make all; done
+	@while true; do inotifywait $(DOC) $(DOC_SV) sobCV.cls Makefile $(COVER_LETTER) icons; sleep 0.01; $(MAKE) all; done
 
 clean:  ## Clean output files
 	cd output && rm -f *.aux *.log *.toc *.lof *.lot \
 	       *.idx *.ind *.ilg *.out *.bbl *.blg *.brf \
 		   *.dvi *.ps
-
 
 
