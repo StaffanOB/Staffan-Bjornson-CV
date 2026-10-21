@@ -1,40 +1,50 @@
-SHELL=/bin/bash  # for the while loop below
-DOC=sobCV.tex  	 # set the path to your TeX file here
-DOC_SV=sobCV_sv.tex  	 # set the path to your TeX file here
-GCC=pdflatex -halt-on-error -interaction=nonstopmode # LaTeX compiler
+SHELL := /bin/bash
+PDFLATEX ?= pdflatex
+TEXFLAGS ?= -halt-on-error -interaction=nonstopmode -file-line-error
+DOC := sobCV.tex
+DOC_SV := sobCV_sv.tex
+CLASS := sobCV.cls
+OUTDIR := output
+COVER_LETTER_DIR := cover_letters
 
-COVER_LETTER=$(wildcard sobCL_*.tex)
-PDFSRC := $(patsubst sobCL_%.tex,output/sobCL_%.pdf, $(COVER_LETTER))
-RENAMED := $(patsubst sobCL_%.tex,Staffan\ Bjornson\ CL\ -\ %.pdf, $(COVER_LETTER))
+COVER_LETTERS := $(wildcard sobCL_*.tex)
 
-.PHONY: all watch clean
+.PHONY: all check-tools watch clean
 
-all:
-	mkdir -p output/
-	mkdir -p cover_letters/
+all: check-tools
+	mkdir -p "$(OUTDIR)" "$(COVER_LETTER_DIR)"
 
 	# === Compile CVs ===
-	$(GCC) -output-directory output/ $(DOC)
-	cp output/sobCV.pdf 'Staffan Bjornson CV.pdf'
+	"$(PDFLATEX)" $(TEXFLAGS) -output-directory "$(OUTDIR)" "$(DOC)"
+	cp "$(OUTDIR)/sobCV.pdf" "Staffan Bjornson CV.pdf"
 
-	$(GCC) -output-directory output/ $(DOC_SV)
-	cp output/sobCV_sv.pdf 'Staffan Bjornson CV_se.pdf'
+	"$(PDFLATEX)" $(TEXFLAGS) -output-directory "$(OUTDIR)" "$(DOC_SV)"
+	cp "$(OUTDIR)/sobCV_sv.pdf" "Staffan Bjornson CV_se.pdf"
 
 	# Compile and rename all sobCL_*.tex files ===
 	@for file in sobCL_*.tex; do \
 		[ -f "$$file" ] || continue; \
 		name=$${file#sobCL_}; \
 		name=$${name%.tex}; \
-		$(GCC) -output-directory output/ "$$file"; \
-		cp "output/sobCL_$$name.pdf" cover_letters/"Staffan Bjornson CL - $$name.pdf"; \
+		"$(PDFLATEX)" $(TEXFLAGS) -output-directory "$(OUTDIR)" "$$file"; \
+		cp "$(OUTDIR)/sobCL_$$name.pdf" "$(COVER_LETTER_DIR)/Staffan Bjornson CL - $$name.pdf"; \
 	done
 
+check-tools:
+	@command -v "$(PDFLATEX)" >/dev/null || { \
+		echo "Error: TeX compiler '$(PDFLATEX)' was not found in PATH."; \
+		echo "Set PDFLATEX=/path/to/pdflatex or install a TeX distribution."; \
+		exit 127; \
+	}
+
 watch:  ## Recompile on updates to the source file
-	@while true; do inotifywait $(DOC) $(DOC_SV) sobCV.cls Makefile $(COVER_LETTER) icons; sleep 0.01; $(MAKE) all; done
+	@command -v inotifywait >/dev/null || { \
+		echo "Error: inotifywait was not found. Install inotify-tools to use watch."; \
+		exit 127; \
+	}
+	@while true; do inotifywait "$(DOC)" "$(DOC_SV)" "$(CLASS)" Makefile $(COVER_LETTERS) icons; sleep 0.01; $(MAKE) all; done
 
 clean:  ## Clean output files
-	cd output && rm -f *.aux *.log *.toc *.lof *.lot \
+	cd "$(OUTDIR)" && rm -f *.aux *.log *.toc *.lof *.lot \
 	       *.idx *.ind *.ilg *.out *.bbl *.blg *.brf \
 		   *.dvi *.ps
-
-

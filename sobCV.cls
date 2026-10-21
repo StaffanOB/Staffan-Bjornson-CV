@@ -157,20 +157,16 @@
     \vspace{0pt}
 }
 
-\makeatletter
-\long\def\sobcv@csvlist#1#2{%
-    \sobcv@csvitem{#1}#2,\sobcv@csv@end
+\ExplSyntaxOn
+\seq_new:N \l__sobcv_csv_items_seq
+\NewDocumentCommand{\sobcvCsvList}{m +m}{%
+    \seq_set_split:Nnn \l__sobcv_csv_items_seq { , } {#2}
+    \seq_map_inline:Nn \l__sobcv_csv_items_seq {#1{##1}}
 }
-\long\def\sobcv@csvitem#1#2,#3\sobcv@csv@end{%
-    #1{#2}%
-    \if\relax\detokenize{#3}\relax
-    \else
-        \sobcv@csvitem{#1}#3,\sobcv@csv@end
-    \fi
-}
-\long\def\sobcv@bulletitem#1{%
+\NewDocumentCommand{\sobcvBulletItem}{+m}{%
     \noindent{\raggedright\color{highlight}$\bullet$} #1\par
 }
+\ExplSyntaxOff
 
 \newcommand{\exList}[2]{
     \vspace{1em} \noindent
@@ -178,7 +174,7 @@
     \vspace{0em} %\noindent
         \begin{multicols}{2}
             \vspace{0pt}
-            \sobcv@csvlist\sobcv@bulletitem{#2}
+            \sobcvCsvList{\sobcvBulletItem}{#2}
             \vfill\null
         \end{multicols}
     \vspace{1em}
@@ -230,7 +226,7 @@
     \begin{adjustwidth}{30pt}{0pt}
         \begin{multicols}{#1}
             \vspace{0pt}
-            \sobcv@csvlist\sobcv@bulletitem{#2}
+            \sobcvCsvList{\sobcvBulletItem}{#2}
             \vfill\null
         \end{multicols}
     \end{adjustwidth}
@@ -244,7 +240,7 @@
     \hfill\begin{minipage}{
             \dimexpr\textwidth-3cm
         }
-        \sobcv@csvlist\sobcv@bulletitem{#1}
+    \sobcvCsvList{\sobcvBulletItem}{#1}
         \vfill\null
     \end{minipage}
 }
@@ -254,13 +250,12 @@
 % LICENSE
 \newcommand{\license}[1]{
     \hfill\begin{minipage}{
-            \dimexpr\textwidth-3cm
-        }
-        \sobcv@csvlist\sobcv@bulletitem{#1}
-        \xdef\tpd{\the\prevdepth}
+        \dimexpr\textwidth-3cm
+    }
+    \sobcvCsvList{\sobcvBulletItem}{#1}
+    \xdef\tpd{\the\prevdepth}
     \end{minipage}
 }
-\makeatother
 
 
 % ============================================================================
